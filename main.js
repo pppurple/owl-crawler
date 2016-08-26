@@ -18,7 +18,7 @@ function createWindow () {
 	mainWindow.loadURL('file://' + __dirname + '/index.html');
 	// デバッグするためのDevToolsを表示
 	contents = mainWindow.webContents;
-	contents.openDevTools();
+	// contents.openDevTools();
 	//mainWindow.webContents.openDevTools();
 	// ウィンドウを閉じたら参照を破棄
 	mainWindow.on('closed', () => {
@@ -42,12 +42,30 @@ app.on('window-all-closed', () => {
 	}
 });
 
+let capCon;
 ipcMain.on('execute-message', (event, arg) => {
-	contents.loadURL(arg);
-	contents.on('did-finish-load', () => {
-		contents.capturePage({x:0, y:0, width:100, height:100}, (buffer) => {
-			fs.writeFile('./abc.png', buffer, 'base64', (err) => {
+	capWin = new BrowserWindow({width: 1000, height: 2000});
+	capCon = capWin.webContents;
+	capCon.loadURL(arg);
+	//contents.loadURL(arg);
+	capCon.on('did-finish-load', () => {
+		let contentBounds = capWin.getContentBounds();
+		let bounds = capWin.getBounds();
+		let size = capWin.getSize();
+		let contentSize = capWin.getContentSize();
+		console.log(contentBounds.width);
+		console.log(contentBounds.height);
+		console.log(bounds.width);
+		console.log(bounds.height);
+		console.log(size[0]);
+		console.log(size[1]);
+		console.log(contentSize[0]);
+		console.log(contentSize[1]);
+		capCon.capturePage({x:0, y:0, width:1000, height:2000}, (buffer) => {
+			// fs.writeFile('./abc.png', buffer, 'base64', (err) => {
+			fs.writeFile('./abc.png', buffer.toPng(), (err) => {
 				console.log("xxxx", err);
+				capWin.close();
 			});
 		});
 		event.sender.send('execute-result', arg);
