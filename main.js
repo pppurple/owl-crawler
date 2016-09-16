@@ -3,6 +3,9 @@
 //const app = electron.app;
 const {app, BrowserWindow, ipcMain} = require('electron');
 const fs = require('fs');
+const Pageres = require('pageres');
+const phantom = require('phantom');
+const EventEmitter = require('events');
 //const {app, BrowserWindow, ipcMain, webContents} = require('electron');
 //const BrowserWindow = electron.BrowserWindow;
 //const {ipcMain} = require('electron')
@@ -42,13 +45,36 @@ app.on('window-all-closed', () => {
 	}
 });
 
+const emitter = new EventEmitter();
+
 let capCon;
 ipcMain.on('execute-message', (event, arg) => {
-	capWin = new BrowserWindow({width: 1000, height: 2000});
-	capCon = capWin.webContents;
-	capCon.loadURL(arg);
-	//contents.loadURL(arg);
-	capCon.on('did-finish-load', () => {
+/*
+		const pageres = new Pageres({delay: 2})
+		.src('https://www.npmjs.com/package/screenshot-stream', ['480x320', '1024x768', 'iphone 5s', '1280x1024', '1920x1080'], {crop: false})
+		.dest(__dirname)
+		.run()
+		.then(() => {
+
+			event.sender.send('execute-result', 'done:' + arg);
+		    console.log('done');
+		});
+
+*/
+
+	phantom.create()
+		.then();
+
+
+
+
+
+	// let capWin = new BrowserWindow({width: 1000, height: 2000});
+	// capCon = capWin.webContents;
+	// capCon.loadURL(arg);
+	// contents.downloadURL(arg);
+	// capCon.on('did-finish-load', () => {
+		/*
 		let contentBounds = capWin.getContentBounds();
 		let bounds = capWin.getBounds();
 		let size = capWin.getSize();
@@ -61,6 +87,7 @@ ipcMain.on('execute-message', (event, arg) => {
 		console.log(size[1]);
 		console.log(contentSize[0]);
 		console.log(contentSize[1]);
+
 		capCon.capturePage({x:0, y:0, width:1000, height:2000}, (buffer) => {
 			// fs.writeFile('./abc.png', buffer, 'base64', (err) => {
 			fs.writeFile('./abc.png', buffer.toPng(), (err) => {
@@ -68,11 +95,19 @@ ipcMain.on('execute-message', (event, arg) => {
 				capWin.close();
 			});
 		});
-		event.sender.send('execute-result', arg);
+		*/
+		console.log('arg:' + arg);
 
-	});
+
+	// });
 	// event.sender.send('execute-result', arg);
 	console.log('execute: ' + arg);
+});
+
+emitter.on('crawl', (url, level) => {
+	console.log('url:' + url);
+	console.log('level:' + level);
+
 });
 
 ipcMain.on('synchronous-message', (event, arg) => {
